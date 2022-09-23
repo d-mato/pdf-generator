@@ -1,16 +1,23 @@
 import base64
 import json
 import tempfile
+from contextlib import suppress
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
 def handler(event, context):
-    body = json.loads(event["body"])
-    source = body.get("source")
+    params = {}
+    with suppress(Exception):
+        parsed = json.loads(event["body"])
+        params = parsed if isinstance(parsed, dict) else {}
 
+    source = params.get("source")
     if source is None:
-        return {"statusCode": 400, "body": json.dumps({"error": "source is required"})}
+        return {
+            "statusCode": 400,
+            "body": json.dumps({"error": "source is required"}),
+        }
 
     pdf = generate_pdf(source)
     return {
