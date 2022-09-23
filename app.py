@@ -1,4 +1,3 @@
-import base64
 import json
 import tempfile
 from contextlib import suppress
@@ -21,6 +20,7 @@ def handler(event, context):
 
     pdf = generate_pdf(source)
     return {
+        "statusCode": 201,
         "headers": {"Content-Type": "application/pdf"},
         "body": pdf,
         "isBase64Encoded": True,
