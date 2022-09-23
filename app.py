@@ -22,12 +22,12 @@ def handler(event, context):
     pdf = generate_pdf(source)
     return {
         "headers": {"Content-Type": "application/pdf"},
-        "body": pdf.decode("utf-8"),
+        "body": pdf,
         "isBase64Encoded": True,
     }
 
 
-def generate_pdf(html: str) -> bytes:
+def generate_pdf(html: str) -> str:
     with tempfile.NamedTemporaryFile(prefix="/tmp/", suffix=".html") as tmp:
         tmp.write(html.encode())
         tmp.seek(0)
@@ -40,8 +40,7 @@ def generate_pdf(html: str) -> bytes:
             "paperHeight": 11.69,
             "displayHeaderFooter": False,
         }
-        pdf_base64 = driver.execute_cdp_cmd("Page.printToPDF", print_options)
-        return base64.b64decode(pdf_base64["data"])
+        return driver.execute_cdp_cmd("Page.printToPDF", print_options)["data"]
 
 
 def build_driver():
