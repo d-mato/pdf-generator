@@ -4,6 +4,12 @@ from contextlib import suppress
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
+default_print_options = {
+    "paperWidth": 8.27,
+    "paperHeight": 11.69,
+    "displayHeaderFooter": False,
+}
+
 
 def handler(event, context):
     params = {}
@@ -18,7 +24,11 @@ def handler(event, context):
             "body": json.dumps({"error": "source is required"}),
         }
 
-    pdf = generate_pdf(source)
+    print_options = dict(default_print_options)
+    if isinstance(params.get("print_options"), dict):
+        print_options.update(params.get("print_options"))
+
+    pdf = generate_pdf(source, print_options)
     return {
         "statusCode": 201,
         "headers": {"Content-Type": "application/pdf"},
@@ -27,7 +37,7 @@ def handler(event, context):
     }
 
 
-def generate_pdf(html: str) -> str:
+def generate_pdf(html: str, print_options) -> str:
     with tempfile.NamedTemporaryFile(prefix="/tmp/", suffix=".html") as tmp:
         tmp.write(html.encode())
         tmp.seek(0)
@@ -35,11 +45,6 @@ def generate_pdf(html: str) -> str:
         driver = build_driver()
         driver.get("file://{}".format(tmp.name))
 
-        print_options = {
-            "paperWidth": 8.27,
-            "paperHeight": 11.69,
-            "displayHeaderFooter": False,
-        }
         return driver.execute_cdp_cmd("Page.printToPDF", print_options)["data"]
 
 
