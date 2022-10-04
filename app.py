@@ -1,4 +1,5 @@
 import json
+import shutil
 import tempfile
 from contextlib import suppress
 from selenium import webdriver
@@ -29,6 +30,10 @@ def handler(event, context):
         print_options.update(params.get("print_options"))
 
     pdf = generate_pdf(source, print_options)
+
+    with suppress(Exception):
+        shutil.rmtree("/tmp")
+
     return {
         "statusCode": 201,
         "headers": {"Content-Type": "application/pdf"},
@@ -45,7 +50,10 @@ def generate_pdf(html: str, print_options) -> str:
         driver = build_driver()
         driver.get("file://{}".format(tmp.name))
 
-        return driver.execute_cdp_cmd("Page.printToPDF", print_options)["data"]
+        pdf = driver.execute_cdp_cmd("Page.printToPDF", print_options)["data"]
+        driver.quit()
+
+        return pdf
 
 
 def build_driver():
