@@ -6,7 +6,7 @@
       "selection": {
         "tagStatus": "any",
         "countType": "imageCountMoreThan",
-        "countNumber": 10
+        "countNumber": 1
       },
       "action": {
         "type": "expire"
