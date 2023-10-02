@@ -1,8 +1,12 @@
 import json
+import base64
 import unittest
 from unittest.mock import MagicMock, patch
 
+from flask.testing import FlaskClient
+
 from core import generate_pdf
+from app import app
 from lambda_function import handler
 
 ENCODED_PDF = "TEST"
@@ -20,6 +24,34 @@ class PdfGeneratorTest(unittest.TestCase):
         pdf = generate_pdf("<b>Hello World</b>", {})
 
         self.assertEqual(pdf, ENCODED_PDF)
+
+
+@patch("app.generate_pdf", MagicMock(return_value=ENCODED_PDF))
+class AppHandlerTest(unittest.TestCase):
+    client: FlaskClient
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        app.config.update({"TESTING": True})
+        self.client = app.test_client()
+
+    def test(self):
+        request = {
+            "source": "<b>Hello World</b>",
+            "print_options": {
+                "pageSize": "A4",
+            },
+        }
+        response = self.client.post("/", json=request)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data, base64.b64decode(ENCODED_PDF))
+
+    def test_validation(self):
+        request = {}
+        response = self.client.post("/", json=request)
+
+        self.assertEqual(response.status_code, 400)
 
 
 @patch("lambda_function.generate_pdf", MagicMock(return_value=ENCODED_PDF))
