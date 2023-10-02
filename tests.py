@@ -2,7 +2,8 @@ import json
 import unittest
 from unittest.mock import MagicMock, patch
 
-from app import generate_pdf, handler
+from core import generate_pdf
+from lambda_function import handler
 
 ENCODED_PDF = "TEST"
 
@@ -13,8 +14,16 @@ def MockChromeDriver(options=None):
     return mock
 
 
-@patch("app.webdriver", MagicMock(Chrome=MockChromeDriver))
+@patch("core.webdriver", MagicMock(Chrome=MockChromeDriver))
 class PdfGeneratorTest(unittest.TestCase):
+    def test_generate_pdf(self):
+        pdf = generate_pdf("<b>Hello World</b>", {})
+
+        self.assertEqual(pdf, ENCODED_PDF)
+
+
+@patch("lambda_function.generate_pdf", MagicMock(return_value=ENCODED_PDF))
+class LambdaHandlerTest(unittest.TestCase):
     def test_handler(self):
         event = {
             "body": json.dumps(
@@ -36,8 +45,3 @@ class PdfGeneratorTest(unittest.TestCase):
         res = handler(event, {})
 
         self.assertEqual(res["statusCode"], 400)
-
-    def test_generate_pdf(self):
-        pdf = generate_pdf("<b>Hello World</b>", {})
-
-        self.assertEqual(pdf, ENCODED_PDF)
