@@ -1,7 +1,5 @@
 # PDF-Generator
 
-**This library works only at AWS Lambda.**
-
 ## API Spec
 
 Example request:
@@ -26,16 +24,16 @@ docker build -t pdf-generator .
 ## Run
 
 ```sh
-docker run --rm -p 9000:8080 pdf-generator
+docker run --rm -p 8000:5000 pdf-generator
 ```
 
-Post event:
+Request:
 
 ```sh
-curl -d '{"body":"{\"source\":\"Hello World\"}"}' localhost:9000/2015-03-31/functions/function/invocations | jq -r .body | base64 -d > output.pdf
+curl -d '{"source":"<b>Hello World</b>"}' -H 'Content-Type: application/json' localhost:8000 > output.pdf
 ```
 
-## Deploy
+## Deploy to Lambda
 
 ```sh
 cd terraform
