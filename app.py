@@ -1,5 +1,4 @@
 import json
-import shutil
 import tempfile
 from contextlib import suppress
 from selenium import webdriver
@@ -30,9 +29,6 @@ def handler(event, context):
         print_options.update(params.get("print_options"))
 
     pdf = generate_pdf(source, print_options)
-
-    with suppress(Exception):
-        shutil.rmtree("/tmp")
 
     return {
         "statusCode": 201,
