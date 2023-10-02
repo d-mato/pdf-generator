@@ -1,5 +1,22 @@
 # PDF-Generator
 
+**This library works only at AWS Lambda.**
+
+## API Spec
+
+Example request:
+
+```json
+{
+  "source": "<b>Hello World</b>",
+  "print_options": {
+    "pageSize": "A4"
+  }
+}
+```
+
+Response is Base64-encoded.
+
 ## Build
 
 ```sh
