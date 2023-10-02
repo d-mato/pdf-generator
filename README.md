@@ -24,3 +24,9 @@ curl -d '{"body":"{\"source\":\"Hello World\"}"}' localhost:9000/2015-03-31/func
 cd terraform
 terraform apply
 ```
+
+## Test
+
+```sh
+python -m unittest
+```
