@@ -18,11 +18,3 @@ module "lambda" {
   function_name  = local.function_name
   repository_url = module.ecr.repository_url
 }
-
-module "api_gateway" {
-  source = "./modules/api_gateway"
-
-  lambda_invoke_arn    = module.lambda.invoke_arn
-  lambda_function_name = local.function_name
-}
-
