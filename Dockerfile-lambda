@@ -1,9 +1,9 @@
-FROM public.ecr.aws/lambda/python
+FROM public.ecr.aws/lambda/python:3.12
 
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
-  && yum install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm \
-  && yum install -y chromium chromedriver ipa-gothic-fonts ipa-mincho-fonts ipa-pgothic-fonts ipa-pmincho-fonts \
-  && yum clean all
+COPY fedora.repo /etc/yum.repos.d/fedora.repo
+
+RUN dnf install -y --enablerepo=fedora chromium chromedriver ipa-gothic-fonts ipa-mincho-fonts ipa-pgothic-fonts ipa-pmincho-fonts \
+  && dnf clean all
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
