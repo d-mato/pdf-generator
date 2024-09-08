@@ -20,6 +20,11 @@ resource "aws_lambda_function" "this" {
   memory_size = 1024
 }
 
+resource "aws_lambda_function_url" "this" {
+  function_name = aws_lambda_function.this.function_name
+  authorization_type = "NONE"
+}
+
 output "invoke_arn" {
   value = aws_lambda_function.this.invoke_arn
 }
