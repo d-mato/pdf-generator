@@ -21,10 +21,10 @@ jobs:
         with:
           aws-region: ${{ env.AWS_REGION }}
           role-to-assume: ${{ env.AWS_ROLE_ARN }}
-      - uses: actions/checkout@v3
-      - uses: aws-actions/amazon-ecr-login@v1
+      - uses: actions/checkout@v4
+      - uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v6
         with:
           file: Dockerfile-lambda
           push: true
